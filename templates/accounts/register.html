@@ -1,0 +1,343 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+<style>
+    body {
+        background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNzY1Nzl8MHwxfHNlYXJjaHwxfHxlbGVjdHJvbiUyMHB1cnBsZXxlbnwwfHx8fDE3MDY3MjgwMDA&ixlib=rb-1.2.1&q=80&w=2000');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+    }
+
+    body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.85) 0%, rgba(5, 150, 105, 0.85) 100%);
+        z-index: 0;
+    }
+
+    .glass-card {
+        position: relative;
+        z-index: 1;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .dark .glass-card {
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .form-input {
+        display: block;
+        width: 100%;
+        padding: 1rem 1.25rem;
+        font-size: 0.95rem;
+        color: #1e293b;
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        border-radius: 1rem;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+
+    .form-input:focus {
+        border-color: #10b981;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
+    }
+
+    .dark .form-input {
+        background: #1e293b;
+        border-color: #334155;
+        color: #f1f5f9;
+    }
+
+    .dark .form-input:focus {
+        background: #0f172a;
+        border-color: #10b981;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .dark .form-label {
+        color: #94a3b8;
+    }
+
+    .input-group:focus-within .form-label {
+        color: #10b981;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .btn-primary:hover::before {
+        left: 100%;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+    }
+
+    .social-btn {
+        transition: all 0.3s ease;
+    }
+
+    .social-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    .floating-icon {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .password-strength {
+        height: 4px;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+
+    .strength-weak {
+        background: #ef4444;
+        width: 33%;
+    }
+
+    .strength-medium {
+        background: #f59e0b;
+        width: 66%;
+    }
+
+    .strength-strong {
+        background: #10b981;
+        width: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6 overflow-y-auto">
+    <div class="w-full max-w-xl animate-fade-in py-8">
+
+        <!-- Logo & Header -->
+        <div class="text-center mb-8 relative z-10">
+            <div
+                class="floating-icon inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-white/20 backdrop-blur-sm text-white shadow-2xl mb-6">
+                <i class="fa-solid fa-user-plus text-4xl"></i>
+            </div>
+            <h1 class="text-4xl font-header font-bold text-white tracking-tight drop-shadow-lg">Create Account</h1>
+            <p class="text-white/90 mt-3 font-medium text-lg drop-shadow">Start your AI-powered journey today</p>
+        </div>
+
+        <!-- Register Card -->
+        <div class="glass-card rounded-3xl p-8 shadow-2xl">
+            <form method="post" class="space-y-5">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div
+                    class="mb-6 p-4 bg-rose-50 dark:bg-rose-900/20 rounded-2xl border border-rose-200 dark:border-rose-800">
+                    {% for error in form.non_field_errors %}
+                    <p class="text-sm text-rose-700 dark:text-rose-300 flex items-center">
+                        <i class="fa-solid fa-circle-exclamation mr-2"></i>{{ error }}
+                    </p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Name Fields -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="input-group">
+                        <label class="form-label">First Name</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                        <p class="mt-2 text-sm text-rose-600 dark:text-rose-400">{{ form.first_name.errors|first }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="input-group">
+                        <label class="form-label">Last Name</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                        <p class="mt-2 text-sm text-rose-600 dark:text-rose-400">{{ form.last_name.errors|first }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Username -->
+                <div class="input-group">
+                    <label class="form-label">Username</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fa-regular fa-user text-slate-400"></i>
+                        </div>
+                        {{ form.username }}
+                    </div>
+                    {% if form.username.errors %}
+                    <p class="mt-2 text-sm text-rose-600 dark:text-rose-400">{{ form.username.errors|first }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Email -->
+                <div class="input-group">
+                    <label class="form-label">Email Address</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fa-regular fa-envelope text-slate-400"></i>
+                        </div>
+                        {{ form.email }}
+                    </div>
+                    {% if form.email.errors %}
+                    <p class="mt-2 text-sm text-rose-600 dark:text-rose-400">{{ form.email.errors|first }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Password Fields -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="input-group">
+                        <label class="form-label">Password</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-lock text-slate-400"></i>
+                            </div>
+                            {{ form.password }}
+                        </div>
+                        {% if form.password.errors %}
+                        <p class="mt-2 text-sm text-rose-600 dark:text-rose-400">{{ form.password.errors|first }}</p>
+                        {% endif %}
+                        <div class="password-strength bg-slate-200 mt-2"></div>
+                    </div>
+                    <div class="input-group">
+                        <label class="form-label">Confirm Password</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-lock text-slate-400"></i>
+                            </div>
+                            {{ form.password_confirm }}
+                        </div>
+                        {% if form.password_confirm.errors %}
+                        <p class="mt-2 text-sm text-rose-600 dark:text-rose-400">{{ form.password_confirm.errors|first
+                            }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Terms -->
+                <div class="flex items-start pt-2">
+                    <input type="checkbox" required
+                        class="w-5 h-5 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500 cursor-pointer mt-0.5">
+                    <span class="ml-3 text-sm text-slate-600 dark:text-slate-400">
+                        I agree to the <a href="#" class="text-emerald-600 font-semibold hover:underline">Terms of
+                            Service</a> and <a href="#" class="text-emerald-600 font-semibold hover:underline">Privacy
+                            Policy</a>
+                    </span>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-primary w-full py-4 px-6 text-white rounded-2xl font-bold text-lg">
+                    Create Account <i class="fa-solid fa-sparkles ml-2"></i>
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="relative my-8">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-slate-200 dark:border-slate-700"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span
+                        class="px-4 bg-white dark:bg-dark-900 text-slate-400 font-semibold uppercase tracking-wider text-xs">Or
+                        join with</span>
+                </div>
+            </div>
+
+            <!-- Social Login -->
+            <div class="flex items-center justify-center space-x-4">
+                <button
+                    class="social-btn flex items-center justify-center w-14 h-14 bg-white dark:bg-dark-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:border-emerald-500 transition-all">
+                    <i class="fa-brands fa-google text-xl"
+                        style="background: linear-gradient(135deg, #EA4335, #FBBC05, #34A853, #4285F4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                </button>
+                <button
+                    class="social-btn flex items-center justify-center w-14 h-14 bg-white dark:bg-dark-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:border-emerald-500 transition-all">
+                    <i class="fa-brands fa-apple text-xl"></i>
+                </button>
+                <button
+                    class="social-btn flex items-center justify-center w-14 h-14 bg-white dark:bg-dark-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:border-emerald-500 transition-all">
+                    <i class="fa-brands fa-github text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sign In Link -->
+        <p class="text-center mt-8 text-white/80 font-medium relative z-10 drop-shadow">
+            Already have an account? <a href="{% url 'accounts:login' %}"
+                class="text-white font-bold hover:underline underline-offset-4">Sign in</a>
+        </p>
+    </div>
+</div>
+
+<script>
+    // Password strength indicator
+    const passwordInput = document.querySelector('input[name="password"]');
+    const strengthBar = document.querySelector('.password-strength');
+
+    if (passwordInput && strengthBar) {
+        passwordInput.addEventListener('input', function () {
+            const password = this.value;
+            strengthBar.className = 'password-strength';
+
+            if (password.length === 0) {
+                strengthBar.style.width = '0';
+            } else if (password.length < 6) {
+                strengthBar.classList.add('strength-weak');
+            } else if (password.length < 10) {
+                strengthBar.classList.add('strength-medium');
+            } else {
+                strengthBar.classList.add('strength-strong');
+            }
+        });
+    }
+</script>
+{% endblock %}

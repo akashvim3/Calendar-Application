@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="h-[calc(100vh-140px)] flex flex-col lg:flex-row gap-6 animate-fade-in">
+
+    <!-- Left: Session History (Desktop only) -->
+    <div
+        class="hidden lg:block w-80 shrink-0 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-800 rounded-3xl overflow-hidden flex flex-col transition-all">
+        <div class="p-6 border-b border-slate-100 dark:border-dark-800">
+            <h3 class="font-bold text-slate-800 dark:text-white flex items-center">
+                <i class="fa-solid fa-clock-rotate-left mr-3 text-slate-400"></i> Local Activity
+            </h3>
+        </div>
+        <div class="flex-1 overflow-y-auto p-4 space-y-2">
+            {% for session in chat_sessions %}
+            <a href="{% url 'chat_app:chat-session' session.session_id %}"
+                class="block p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-dark-800 border border-transparent hover:border-slate-100 dark:hover:border-dark-700 transition-all group">
+                <p class="text-sm font-bold text-slate-800 dark:text-slate-300 truncate">{{ session.title|default:"New
+                    Conversation" }}</p>
+                <div class="flex items-center mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                    <span>{{ session.created_at|date:"M d, H:i" }}</span>
+                    <span class="mx-2">•</span>
+                    <span>{{ session.message_count }} Messages</span>
+                </div>
+            </a>
+            {% endfor %}
+
+            <button onclick="createNewChat()"
+                class="w-full mt-6 py-3 border-2 border-dashed border-slate-200 dark:border-dark-800 rounded-2xl text-slate-400 hover:text-primary-500 hover:border-primary-400 transition-all font-bold text-sm">
+                + New Chat Session
+            </button>
+        </div>
+        <div class="p-6 bg-slate-50 dark:bg-dark-800/50 border-t border-slate-100 dark:border-dark-800">
+            <div class="p-4 bg-indigo-600 rounded-2xl text-white shadow-xl shadow-indigo-500/10">
+                <p class="text-xs font-bold uppercase tracking-widest mb-3 opacity-80">Connected Model</p>
+                <p class="font-bold flex items-center"><i class="fa-solid fa-shield-halved mr-2"></i> Gemini Pro 1.5</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Chat Window -->
+    <div
+        class="flex-1 bg-white dark:bg-dark-900 rounded-3xl border border-slate-200 dark:border-dark-800 shadow-sm overflow-hidden flex flex-col transition-all relative">
+
+        <!-- Chat Header -->
+        <div class="p-6 border-b border-slate-100 dark:border-dark-800 flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div
+                    class="w-12 h-12 rounded-2xl bg-primary-600 text-white flex items-center justify-center text-xl shadow-lg shadow-primary-500/20">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-800 dark:text-white">AI Personal Assistant</h3>
+                    <p class="text-xs text-emerald-500 font-bold flex items-center">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span> Analyzing
+                        context...
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button
+                    class="p-3 text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-dark-800 rounded-xl transition-all"><i
+                        class="fa-solid fa-trash-can"></i></button>
+                <button
+                    class="p-3 text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-dark-800 rounded-xl transition-all"><i
+                        class="fa-solid fa-sliders"></i></button>
+            </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-8 space-y-8 scroll-smooth">
+            <!-- Initial AI Welcome -->
+            <div class="flex items-start max-w-2xl animate-fade-in">
+                <div
+                    class="w-10 h-10 rounded-xl bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 flex items-center justify-center shrink-0 border border-primary-200 dark:border-primary-800 font-bold">
+                    AI</div>
+                <div class="ml-4 space-y-3">
+                    <div
+                        class="p-5 bg-slate-50 dark:bg-dark-800 text-slate-800 dark:text-slate-200 rounded-3xl rounded-tl-none shadow-sm leading-relaxed">
+                        Hello! I'm your AI Personal Assistant. I can help you manage your calendar, sort through emails,
+                        and organize your tasks. What's on your mind today?
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button
+                            class="text-[11px] font-bold px-4 py-2 bg-white dark:bg-dark-800 border border-slate-200 dark:border-dark-700 text-slate-600 dark:text-slate-300 rounded-full hover:border-primary-500 hover:text-primary-600 transition-all shadow-sm">"What's
+                            on my calendar today?"</button>
+                        <button
+                            class="text-[11px] font-bold px-4 py-2 bg-white dark:bg-dark-800 border border-slate-200 dark:border-dark-700 text-slate-600 dark:text-slate-300 rounded-full hover:border-primary-500 hover:text-primary-600 transition-all shadow-sm">"Summarize
+                            my unread emails"</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="p-6 border-t border-slate-100 dark:border-dark-800 bg-white dark:bg-dark-900">
+            <div class="relative group">
+                <div class="absolute inset-y-0 left-4 flex items-center space-x-2">
+                    <button
+                        class="p-2 text-slate-400 hover:text-primary-600 hover:bg-slate-100 dark:hover:bg-dark-800 rounded-xl transition-all"><i
+                            class="fa-solid fa-microphone text-lg"></i></button>
+                    <button
+                        class="p-2 text-slate-400 hover:text-primary-600 hover:bg-slate-100 dark:hover:bg-dark-800 rounded-xl transition-all"><i
+                            class="fa-solid fa-paperclip text-lg"></i></button>
+                </div>
+                <input type="text" id="chat-input" placeholder="Type your message to AI Assistant..."
+                    class="w-full pl-28 pr-16 py-5 bg-slate-50 dark:bg-dark-800/50 border border-slate-100 dark:border-dark-700 rounded-3xl focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 focus:outline-none transition-all dark:text-white font-medium">
+                <div class="absolute inset-y-4 right-4 flex items-center">
+                    <button id="send-btn"
+                        class="w-12 h-12 bg-primary-600 text-white rounded-2xl flex items-center justify-center shadow-xl shadow-primary-500/20 hover:scale-110 active:scale-95 transition-all">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center justify-between px-2">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] flex items-center"><i
+                        class="fa-solid fa-shield-halved mr-2 text-primary-500/50"></i> Encrypted Conversation</p>
+                <div class="flex items-center space-x-4">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Context: <strong>Email
+                            + Calendar</strong> active</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // WebSocket chat implementation
+    let chatSocket = null;
+    let sessionId = null;
+
+    // Initialize WebSocket connection when page loads
+    document.addEventListener('DOMContentLoaded', function () {
+        // Extract session ID from URL - check if we're on /chat/session/{id}/
+        const pathParts = window.location.pathname.split('/').filter(Boolean);
+
+        // If we're on /chat/ (no session), stay on the main chat page
+        if (window.location.pathname === '/chat/' || window.location.pathname.endsWith('/chat')) {
+            // Stay on the main chat page - no session needed
+            sessionId = null;
+            return;
+        }
+
+        // Check if we're on /chat/session/{session_id}/
+        const sessionIndex = pathParts.indexOf('session');
+        if (sessionIndex !== -1 && pathParts[sessionIndex + 1]) {
+            sessionId = pathParts[sessionIndex + 1];
+        }
+
+        // If we have a session ID, connect to WebSocket
+        if (sessionId) {
+            connectWebSocket();
+        }
+    });
+
+    function createNewChat() {
+        // Generate a new session ID
+        const newSessionId = 'session_' + Date.now();
+        // Redirect to the new session URL
+        window.location.href = `/chat/session/${newSessionId}/`;
+    }
+
+    function connectWebSocket() {
+        const chatSocketProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+        chatSocket = new WebSocket(
+            chatSocketProtocol + '://' + window.location.host +
+            '/ws/chat/' + sessionId + '/'
+        );
+
+        chatSocket.onopen = function (e) {
+            console.log('WebSocket connection established');
+        };
+
+        chatSocket.onclose = function (e) {
+            console.error('WebSocket connection closed unexpectedly');
+            // Try to reconnect after a delay
+            setTimeout(function () {
+                console.log('Attempting to reconnect...');
+                connectWebSocket();
+            }, 3000);
+        };
+
+        chatSocket.onerror = function (e) {
+            console.error('WebSocket error:', e);
+        };
+
+        chatSocket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            appendMessage(data.message, data.sender, data.message_id);
+        };
+    }
+
+    // DOM elements
+    const input = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('send-btn');
+    const messagesContainer = document.getElementById('chat-messages');
+
+    // Event listeners
+    input.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    sendBtn.addEventListener('click', sendMessage);
+
+    function sendMessage() {
+        const message = input.value.trim();
+        if (!message) return;
+
+        if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            input.value = '';
+        } else {
+            // Show error if WebSocket is not connected
+            appendMessage('Sorry, there was a connection issue. Please try again.', 'assistant');
+            input.value = '';
+        }
+    }
+
+    function appendMessage(message, sender, messageId = '') {
+        const messageWrapper = document.createElement('div');
+        messageWrapper.className = `flex items-start ${sender === 'user' ? 'justify-end ml-auto' : ''} max-w-2xl animate-fade-in`;
+
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = `w-10 h-10 rounded-xl ${sender === 'user' ? 'bg-primary-600 text-white' : 'bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400'} flex items-center justify-center shrink-0 border border-primary-200 dark:border-primary-800 font-bold`;
+        avatarDiv.textContent = sender === 'user' ? 'ME' : 'AI';
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `ml-4 space-y-3`;
+
+        const contentDiv = document.createElement('div');
+        contentDiv.className = `p-5 ${sender === 'user' ? 'bg-primary-600 text-white rounded-3xl rounded-tr-none shadow-xl shadow-primary-500/10' : 'bg-slate-50 dark:bg-dark-800 text-slate-800 dark:text-slate-200 rounded-3xl rounded-tl-none shadow-sm'} leading-relaxed`;
+        contentDiv.textContent = message;
+
+        messageDiv.appendChild(contentDiv);
+
+        // Add timestamp
+        const timeDiv = document.createElement('div');
+        timeDiv.className = `text-[10px] text-right text-slate-400 font-bold uppercase tracking-widest`;
+        timeDiv.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        messageDiv.appendChild(timeDiv);
+
+        messageWrapper.appendChild(avatarDiv);
+        messageWrapper.appendChild(messageDiv);
+
+        messagesContainer.appendChild(messageWrapper);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+</script>
+{% endblock %}

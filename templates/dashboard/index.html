@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="space-y-8 max-w-7xl mx-auto">
+
+    <!-- Greeting & Summary Card -->
+    <section
+        class="relative overflow-hidden bg-primary-600 dark:bg-primary-900/40 rounded-3xl p-8 text-white shadow-2xl shadow-primary-500/20">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="space-y-2">
+                <h1 class="text-3xl md:text-4xl font-header font-bold animate-fade-in" style="animation-delay: 0.1s;">
+                    Ai_Greeting </h1>
+                <p class="text-primary-100 dark:text-primary-300 opacity-90 text-lg animate-fade-in"
+                    style="animation-delay: 0.2s;">
+                    You have <span class="font-bold underline decoration-white-400/50">{{ events_today.count }}
+                        events</span> and <span class="font-bold underline decoration-white-400/50 text-sky-200">
+                        pending_tasks.count tasks</span> to handle today.
+                </p>
+                <div class="flex items-center gap-4 mt-6 animate-fade-in" style="animation-delay: 0.3s;">
+                    <a href="{% url 'calendar_app:calendar' %}"
+                        class="px-5 py-2.5 bg-white text-primary-600 rounded-xl font-bold hover:bg-slate-50 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-white/10">
+                        <i class="fa-solid fa-calendar-day mr-2"></i> View Calendar
+                    </a>
+                    <button
+                        class="px-5 py-2.5 bg-primary-500/30 text-white border border-white/20 rounded-xl font-bold hover:bg-primary-500/40 transition-all backdrop-blur-md">
+                        <i class="fa-solid fa-sparkles mr-2"></i> AI Assistant Suggestion
+                    </button>
+                </div>
+            </div>
+
+            <!-- Productivity Score Card -->
+            <div class="bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-2xl flex flex-col items-center justify-center text-center animate-fade-in shrink-0 w-full md:w-56"
+                style="animation-delay: 0.4s;">
+                <p class="text-xs font-bold text-primary-200 uppercase tracking-widest mb-3">Productivity Score</p>
+                <div class="relative flex items-center justify-center w-24 h-24">
+                    <svg class="w-full h-full -rotate-90">
+                        <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent"
+                            class="text-primary-800/40" />
+                        <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent"
+                            class="text-white" stroke-dasharray="251.2"
+                            stroke-dashoffset="{{ stroke_dashoffset|floatformat:1 }}" />
+                    </svg>
+                    <span class="absolute text-2xl font-bold font-header">{{ productivity_score }}%</span>
+                </div>
+                <p class="mt-3 text-xs opacity-70">Focus level is stable</p>
+            </div>
+        </div>
+
+        <!-- Abstract Shapes -->
+        <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary-400/20 blur-3xl rounded-full"></div>
+        <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-sky-400/10 blur-3xl rounded-full"></div>
+    </section>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Left: Today's Schedule -->
+        <div class="lg:col-span-2 space-y-8 animate-fade-in" style="animation-delay: 0.5s;">
+            <div
+                class="bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-800 rounded-2xl overflow-hidden transition-all shadow-sm">
+                <div class="p-6 border-b border-slate-100 dark:border-dark-800 flex items-center justify-between">
+                    <h2 class="text-xl font-header font-bold text-slate-800 dark:text-white flex items-center">
+                        <i class="fa-solid fa-clock-rotate-left mr-3 text-primary-500"></i> Today's Schedule
+                    </h2>
+                    <a href="{% url 'calendar_app:calendar' %}"
+                        class="text-sm text-primary-600 font-semibold hover:underline">Full Schedule</a>
+                </div>
+
+                <div class="divide-y divide-slate-100 dark:divide-dark-800 max-h-[400px] overflow-y-auto">
+                    {% if events_today %}
+                    {% for event in events_today %}
+                    <div
+                        class="p-5 flex items-start group hover:bg-slate-50 dark:hover:bg-dark-800/50 transition-colors">
+                        <div class="w-16 shrink-0 flex flex-col items-center">
+                            <span class="text-sm font-bold text-slate-700 dark:text-slate-300">{{
+                                event.start_time|date:"H:i" }}</span>
+                            <span class="text-[10px] text-slate-400 uppercase font-bold">{{ event.start_time|date:"A"
+                                }}</span>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <div class="flex items-center justify-between">
+                                <h4
+                                    class="font-bold text-slate-800 dark:text-white group-hover:text-primary-600 transition-colors">
+                                    {{ event.title }}</h4>
+                                <span
+                                    class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400">{{
+                                    event.category.name|default:"General" }}</span>
+                            </div>
+                            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400 flex items-center">
+                                <i class="fa-solid fa-location-dot mr-2 text-slate-400"></i> {{
+                                event.location|default:"No location set" }}
+                            </p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="p-12 text-center">
+                        <i class="fa-solid fa-calendar-check text-slate-200 dark:text-dark-800 text-5xl mb-4"></i>
+                        <p class="text-slate-500 dark:text-slate-400">No events scheduled for today.</p>
+                        <button class="mt-4 text-primary-600 font-bold hover:underline">+ Add Event</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Tasks List -->
+            <div
+                class="bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-800 rounded-2xl overflow-hidden transition-all shadow-sm">
+                <div class="p-6 border-b border-slate-100 dark:border-dark-800 flex items-center justify-between">
+                    <h2 class="text-xl font-header font-bold text-slate-800 dark:text-white flex items-center">
+                        <i class="fa-solid fa-tasks mr-3 text-sky-500"></i> Important Tasks
+                    </h2>
+                    <a href="{% url 'tasks_app:task-list' %}"
+                        class="text-sm text-primary-600 font-semibold hover:underline">View All Tasks</a>
+                </div>
+
+                <div class="divide-y divide-slate-100 dark:divide-dark-800">
+                    {% if pending_tasks %}
+                    {% for task in pending_tasks %}
+                    <div
+                        class="p-5 flex items-center group hover:bg-slate-50 dark:hover:bg-dark-800/50 transition-colors">
+                        <button
+                            class="w-6 h-6 border-2 border-slate-300 dark:border-dark-700 rounded-full hover:border-primary-500 transition-colors flex items-center justify-center">
+                            <i
+                                class="fa-solid fa-check text-white text-xs opacity-0 group-hover:opacity-100 bg-primary-500 w-full h-full rounded-full flex items-center justify-center transition-opacity"></i>
+                        </button>
+                        <div class="ml-4 flex-1">
+                            <h4
+                                class="font-semibold text-slate-700 dark:text-slate-300 transition-all group-hover:text-slate-900 dark:group-hover:text-white">
+                                {{ task.title }}</h4>
+                            <div class="flex items-center mt-1 space-x-3">
+                                <span class="text-[10px] flex items-center text-slate-400 dark:text-slate-500">
+                                    <i class="fa-solid fa-calendar mr-1.5 opacity-60"></i> Due {{
+                                    task.due_date|naturaltime }}
+                                </span>
+                                <span
+                                    class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider {% if task.priority == 'high' or task.priority == 'urgent' %}bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400{% else %}bg-slate-100 text-slate-600 dark:bg-dark-800 dark:text-slate-400{% endif %}">
+                                    {{ task.priority }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="p-12 text-center text-slate-500">No pending tasks. Great job!</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Recent Activity & AI Widget -->
+        <div class="space-y-8 animate-fade-in" style="animation-delay: 0.6s;">
+
+            <!-- AI Suggestion Widget -->
+            <div
+                class="bg-gradient-to-br from-indigo-50 to-white dark:from-dark-900 dark:to-dark-950 border border-primary-200 dark:border-primary-900/30 rounded-2xl p-6 shadow-md relative overflow-hidden group">
+                <div class="relative z-10">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-primary-600 text-white flex items-center justify-center shadow-lg shadow-primary-500/30">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 dark:text-white">AI Assistant</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 italic">"You have a free slot at 3 PM today.
+                        Would you like to schedule a focus session or catch up on emails?"</p>
+                    <div class="grid grid-cols-2 gap-3 mt-6">
+                        <button
+                            class="text-xs font-bold py-2 bg-white dark:bg-dark-800 border border-slate-200 dark:border-dark-700 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:border-primary-500 transition-all">Schedule
+                            Focus</button>
+                        <button
+                            class="text-xs font-bold py-2 bg-white dark:bg-dark-800 border border-slate-200 dark:border-dark-700 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:border-primary-500 transition-all">Check
+                            Email</button>
+                    </div>
+                </div>
+                <!-- Gradient flare -->
+                <div
+                    class="absolute -bottom-12 -right-12 w-32 h-32 bg-primary-400/10 blur-3xl group-hover:scale-150 transition-transform">
+                </div>
+            </div>
+
+            <!-- Recent Emails -->
+            <div
+                class="bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-800 rounded-2xl overflow-hidden shadow-sm">
+                <div class="p-5 border-b border-slate-100 dark:border-dark-800 flex items-center justify-between">
+                    <h3 class="font-bold text-slate-800 dark:text-white">Recent Emails</h3>
+                    <a href="{% url 'email_app:email-list' %}"
+                        class="text-xs text-primary-600 font-bold hover:underline">Inbox</a>
+                </div>
+                <div class="divide-y divide-slate-100 dark:divide-dark-800">
+                    {% if recent_emails %}
+                    {% for email in recent_emails %}
+                    <div class="p-4 hover:bg-slate-50 dark:hover:bg-dark-800/50 transition-colors">
+                        <div class="flex items-center justify-between mb-1">
+                            <p class="text-xs font-bold text-slate-800 dark:text-white truncate">{{
+                                email.sender_name|default:email.sender_email }}</p>
+                            <span class="text-[9px] text-slate-400 font-bold">{{ email.received_at|date:"H:i" }}</span>
+                        </div>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 truncate font-semibold">{{ email.subject }}
+                        </p>
+                        <p class="text-[10px] text-slate-400 mt-1 line-clamp-1">{{ email.snippet }}</p>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="p-8 text-center text-slate-400 text-sm">Inbox is empty.</div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+<style>
+    body {
+        background-image: url('https://images.unsplash.com/photo-1635070041078-e363dbe005cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNzY1Nzl8MHwxfHNlYXJjaHwxfHxvcmJpdCUyMHB1cnBsZXxlbnwwfHx8fDE3MDY3MjgwMDA&ixlib=rb-1.2.1&q=80&w=2000');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+    }
+
+    body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.85) 0%, rgba(99, 102, 241, 0.85) 100%);
+        z-index: 0;
+    }
+
+    .glass-card {
+        position: relative;
+        z-index: 1;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .dark .glass-card {
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .form-input {
+        display: block;
+        width: 100%;
+        padding: 1rem 1.25rem;
+        font-size: 0.95rem;
+        color: #1e293b;
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        border-radius: 1rem;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+
+    .form-input:focus {
+        border-color: #8b5cf6;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
+    }
+
+    .dark .form-input {
+        background: #1e293b;
+        border-color: #334155;
+        color: #f1f5f9;
+    }
+
+    .dark .form-input:focus {
+        background: #0f172a;
+        border-color: #8b5cf6;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .dark .form-label {
+        color: #94a3b8;
+    }
+
+    .input-group:focus-within .form-label {
+        color: #8b5cf6;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .btn-primary:hover::before {
+        left: 100%;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+    }
+
+    .social-btn {
+        transition: all 0.3s ease;
+    }
+
+    .social-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .toggle-password {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .toggle-password:hover {
+        color: #8b5cf6;
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    .floating-icon {
+        animation: float 3s ease-in-out infinite;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6">
+    <div class="w-full max-w-md animate-fade-in">
+
+        <!-- Logo & Header -->
+        <div class="text-center mb-10 relative z-10">
+            <div
+                class="floating-icon inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-white/20 backdrop-blur-sm text-white shadow-2xl mb-6">
+                <i class="fa-solid fa-bolt-lightning text-4xl"></i>
+            </div>
+            <h1 class="text-4xl font-header font-bold text-white tracking-tight drop-shadow-lg">Welcome Back</h1>
+            <p class="text-white/90 mt-3 font-medium text-lg drop-shadow">Sign in to continue to your AI Assistant</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="glass-card rounded-3xl p-8 shadow-2xl">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div
+                    class="mb-6 p-4 bg-rose-50 dark:bg-rose-900/20 rounded-2xl border border-rose-200 dark:border-rose-800">
+                    {% for error in form.non_field_errors %}
+                    <p class="text-sm text-rose-700 dark:text-rose-300 flex items-center">
+                        <i class="fa-solid fa-circle-exclamation mr-2"></i>{{ error }}
+                    </p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Username -->
+                <div class="input-group">
+                    <label class="form-label">Username or Email</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fa-regular fa-user text-slate-400"></i>
+                        </div>
+                        {{ form.username }}
+                    </div>
+                    {% if form.username.errors %}
+                    <p class="mt-2 text-sm text-rose-600 dark:text-rose-400">{{ form.username.errors|first }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Password -->
+                <div class="input-group">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="form-label mb-0">Password</label>
+                        <a href="{% url 'accounts:forgot_password' %}"
+                            class="text-sm text-violet-600 hover:text-violet-700 font-semibold transition-colors">Forgot
+                            password?</a>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-lock text-slate-400"></i>
+                        </div>
+                        {{ form.password }}
+                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
+                            <i class="fa-regular fa-eye text-slate-400 cursor-pointer toggle-password"
+                                onclick="togglePassword()"></i>
+                        </div>
+                    </div>
+                    {% if form.password.errors %}
+                    <p class="mt-2 text-sm text-rose-600 dark:text-rose-400">{{ form.password.errors|first }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Remember Me -->
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox"
+                            class="w-5 h-5 text-violet-600 border-slate-300 rounded focus:ring-violet-500 cursor-pointer">
+                        <span class="ml-3 text-sm text-slate-600 dark:text-slate-400 font-medium">Remember for 30
+                            days</span>
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-primary w-full py-4 px-6 text-white rounded-2xl font-bold text-lg">
+                    Sign In <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="relative my-8">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-slate-200 dark:border-slate-700"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span
+                        class="px-4 bg-white dark:bg-dark-900 text-slate-400 font-semibold uppercase tracking-wider text-xs">Or
+                        continue with</span>
+                </div>
+            </div>
+
+            <!-- Social Login -->
+            <div class="grid grid-cols-2 gap-4">
+                <button
+                    class="social-btn flex items-center justify-center py-4 px-4 bg-white dark:bg-dark-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:border-violet-500 transition-all">
+                    <i class="fa-brands fa-google text-xl mr-2"
+                        style="background: linear-gradient(135deg, #EA4335, #FBBC05, #34A853, #4285F4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                    <span class="font-semibold text-slate-700 dark:text-slate-300">Google</span>
+                </button>
+                <button
+                    class="social-btn flex items-center justify-center py-4 px-4 bg-white dark:bg-dark-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl hover:border-violet-500 transition-all">
+                    <i class="fa-brands fa-apple text-xl mr-2"></i>
+                    <span class="font-semibold text-slate-700 dark:text-slate-300">Apple</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sign Up Link -->
+        <p class="text-center mt-8 text-white/80 font-medium relative z-10 drop-shadow">
+            Don't have an account? <a href="{% url 'accounts:register' %}"
+                class="text-white font-bold hover:underline underline-offset-4">Create one free</a>
+        </p>
+    </div>
+</div>
+
+<script>
+    function togglePassword() {
+        const passwordInput = document.querySelector('input[name="password"]');
+        const eyeIcon = document.querySelector('.toggle-password');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.classList.remove('fa-eye');
+            eyeIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.classList.remove('fa-eye-slash');
+            eyeIcon.classList.add('fa-eye');
+        }
+    }
+</script>
+{% endblock %}

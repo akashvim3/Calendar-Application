@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8 animate-fade-in">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-5">
+            <div
+                class="w-14 h-14 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-2xl shadow-lg shadow-rose-500/10">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-header font-bold text-slate-900 dark:text-white">Danger Zone</h1>
+                <p class="text-slate-500 dark:text-slate-400 font-medium">Irreversible actions for your account</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deactivate Account Card -->
+    <div
+        class="bg-white dark:bg-dark-900 rounded-3xl border border-rose-200 dark:border-rose-800 shadow-sm overflow-hidden">
+        <div class="p-8">
+            <div class="flex items-start space-x-6">
+                <div class="w-14 h-14 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-user-slash text-2xl"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-slate-800 dark:text-white text-lg">Deactivate Account</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
+                        Once you deactivate your account, you will be logged out and your profile will be hidden from
+                        others.
+                        You can reactivate your account at any time by logging back in.
+                    </p>
+                    <ul class="mt-4 space-y-2 text-sm text-slate-500 dark:text-slate-400">
+                        <li class="flex items-center"><i class="fa-solid fa-check text-rose-500 mr-2"></i> Your data
+                            will be kept for 30 days</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check text-rose-500 mr-2"></i> You can
+                            reactivate anytime</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check text-rose-500 mr-2"></i> Other users
+                            won't see your profile</li>
+                    </ul>
+
+                    <button onclick="openDeactivateModal()"
+                        class="mt-6 px-6 py-3 bg-rose-600 text-white rounded-2xl font-bold hover:bg-rose-700 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-rose-500/20">
+                        Deactivate Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Account Card -->
+    <div
+        class="bg-white dark:bg-dark-900 rounded-3xl border border-rose-200 dark:border-rose-800 shadow-sm overflow-hidden opacity-50">
+        <div class="p-8">
+            <div class="flex items-start space-x-6">
+                <div
+                    class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-trash text-2xl"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-slate-800 dark:text-white text-lg">Delete Account</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
+                        Permanently delete your account and all associated data. This action cannot be undone.
+                    </p>
+                    <button disabled
+                        class="mt-6 px-6 py-3 bg-slate-200 text-slate-400 rounded-2xl font-bold cursor-not-allowed">
+                        Coming Soon
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Deactivate Confirmation Modal -->
+<div id="deactivate-modal"
+    class="fixed inset-0 z-50 hidden bg-dark-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div
+        class="bg-white dark:bg-dark-900 w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-rose-200 dark:border-rose-800">
+        <div class="p-8 border-b border-rose-100 dark:border-rose-800">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center">
+                    <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-header font-bold text-slate-900 dark:text-white">Deactivate Account</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Are you sure?</p>
+                </div>
+            </div>
+        </div>
+        <div class="p-8">
+            <p class="text-slate-600 dark:text-slate-300 mb-6">
+                This action will deactivate your account. You will be logged out immediately.
+                To reactivate, simply log back in.
+            </p>
+
+            <form method="POST" action="{% url 'accounts:deactivate' %}">
+                {% csrf_token %}
+                <div class="flex justify-end space-x-4">
+                    <button type="button" onclick="closeDeactivateModal()"
+                        class="px-6 py-3 bg-slate-100 dark:bg-dark-800 text-slate-700 dark:text-slate-300 rounded-2xl font-bold hover:bg-slate-200 dark:hover:bg-dark-700 transition-all">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="px-6 py-3 bg-rose-600 text-white rounded-2xl font-bold hover:bg-rose-700 transition-all hover:scale-105 active:scale-95">
+                        Yes, Deactivate
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openDeactivateModal() {
+        document.getElementById('deactivate-modal').classList.remove('hidden');
+    }
+    function closeDeactivateModal() {
+        document.getElementById('deactivate-modal').classList.add('hidden');
+    }
+</script>
+{% endblock %}

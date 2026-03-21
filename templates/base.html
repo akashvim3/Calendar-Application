@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ app_name }} - AI Personal Assistant</title>
+
+    <!-- Meta -->
+    <meta name="description" content="AI-powered Personal Assistant for Calendar, Tasks, Emails and more.">
+    <meta name="keywords" content="AI, Assistant, Calendar, Tasks, Gemini, Email">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff', 100: '#ede9fe', 200: '#ddd6fe', 300: '#c4b5fd', 400: '#a78bfa',
+                            500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9', 800: '#5b21b6', 900: '#4c1d95',
+                        },
+                        dark: {
+                            50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8',
+                            500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a',
+                            950: '#020617',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                        header: ['Outfit', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Global CSS -->
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        .dark {
+            --glass-bg: rgba(15, 23, 42, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .glass-effect {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .nav-item-active {
+            background-color: #f5f3ff;
+            color: #7c3aed;
+            border-right: 4px solid #7c3aed;
+        }
+
+        .dark .nav-item-active {
+            background-color: rgba(76, 19, 149, 0.3);
+            color: #a78bfa;
+            border-right: 4px solid #7c3aed;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 9999px;
+        }
+
+        .dark ::-webkit-scrollbar-thumb {
+            background-color: #334155;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="h-full bg-slate-50 dark:bg-dark-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
+
+    <div class="flex h-screen overflow-hidden">
+
+        <!-- Sidebar Navigation -->
+        {% include 'includes/sidebar.html' %}
+
+        <!-- Main Content Area -->
+        <div class="flex flex-col flex-1 w-0 overflow-hidden">
+
+            <!-- Navbar -->
+            {% include 'includes/navbar.html' %}
+
+            <!-- Content -->
+            <main class="flex-1 relative overflow-y-auto focus:outline-none p-4 md:p-6 lg:p-8">
+                {% if messages %}
+                <div class="mb-6 space-y-2">
+                    {% for message in messages %}
+                    <div
+                        class="p-4 rounded-xl flex items-center justify-between {% if message.tags == 'success' %}bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400{% elif message.tags == 'error' %}bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400{% else %}bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400{% endif %} animate-fade-in">
+                        <div class="flex items-center">
+                            <i
+                                class="fa-solid {% if message.tags == 'success' %}fa-circle-check{% elif message.tags == 'error' %}fa-circle-exclamation{% else %}fa-circle-info{% endif %} mr-3"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                        <button onclick="this.parentElement.remove()"
+                            class="opacity-60 hover:opacity-100 transition-opacity">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% block content %}{% endblock %}
+            </main>
+
+            <!-- Footer -->
+            <footer class="py-4 px-6 border-t border-slate-200 dark:border-dark-800 bg-white dark:bg-dark-900">
+                <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center">
+                            <i class="fa-solid fa-bolt-lightning text-white text-sm"></i>
+                        </div>
+                        <span class="text-sm font-semibold text-slate-600 dark:text-slate-400">
+                            AI Personal Assistant © 2026
+                        </span>
+                    </div>
+
+                    <div class="flex items-center space-x-6">
+                        <a href="#"
+                            class="text-sm text-slate-500 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-400 transition-colors">
+                            <i class="fa-solid fa-file-lines mr-1"></i> Terms
+                        </a>
+                        <a href="#"
+                            class="text-sm text-slate-500 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-400 transition-colors">
+                            <i class="fa-solid fa-shield-halved mr-1"></i> Privacy
+                        </a>
+                        <a href="#"
+                            class="text-sm text-slate-500 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-400 transition-colors">
+                            <i class="fa-solid fa-circle-question mr-1"></i> Help
+                        </a>
+                    </div>
+
+                    <div class="flex items-center space-x-3">
+                        <a href="#"
+                            class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-dark-800 flex items-center justify-center text-slate-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                            <i class="fa-brands fa-twitter"></i>
+                        </a>
+                        <a href="#"
+                            class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-dark-800 flex items-center justify-center text-slate-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                            <i class="fa-brands fa-github"></i>
+                        </a>
+                        <a href="#"
+                            class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-dark-800 flex items-center justify-center text-slate-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                            <i class="fa-brands fa-discord"></i>
+                        </a>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+    </div>
+
+    <!-- AI Floating Chat Widget -->
+    <div id="ai-chat-bubble" class="fixed bottom-6 right-6 z-50">
+        <button
+            class="w-14 h-14 rounded-full bg-primary-600 hover:bg-primary-700 text-white shadow-xl shadow-primary-500/20 flex items-center justify-center transition-all hover:scale-110 active:scale-95 group relative">
+            <i class="fa-solid fa-robot text-xl"></i>
+            <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-4 w-4 bg-sky-500"></span>
+            </span>
+        </button>
+    </div>
+
+    <!-- Global Scripts -->
+    <script>
+        // Dark Mode Toggle Logic
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        function toggleDarkMode() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        }
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,50 @@
+# Django Core
+Django>=5.0,<6.0
+djangorestframework>=3.15
+django-cors-headers>=4.3
+django-filter>=24.0
+
+# Authentication
+djangorestframework-simplejwt>=5.3
+django-allauth>=0.61
+PyJWT>=2.8
+
+# Database
+psycopg2-binary>=2.9
+dj-database-url>=2.1
+
+# Caching & Task Queue
+redis>=5.0
+celery>=5.3
+django-celery-beat>=2.6
+django-celery-results>=2.5
+
+# AI & NLP
+google-generativeai>=0.4
+python-dateutil>=2.8
+
+# Google APIs
+google-api-python-client>=2.100
+google-auth-httplib2>=0.2
+google-auth-oauthlib>=1.2
+
+# WebSockets
+channels>=4.0
+channels-redis>=4.2
+daphne>=4.1
+
+# Utilities
+python-dotenv>=1.0
+Pillow>=10.0
+whitenoise>=6.6
+gunicorn>=21.2
+
+# Testing
+pytest>=8.0
+pytest-django>=4.7
+pytest-cov>=4.1
+
+# Dev tools
+django-debug-toolbar>=4.2
+black>=24.0
+flake8>=7.0

@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-8 animate-fade-in">
+
+    <!-- Tasks Header -->
+    <div
+        class="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-dark-900 p-8 rounded-3xl border border-slate-200 dark:border-dark-800 shadow-sm">
+        <div class="flex items-center space-x-5">
+            <div
+                class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl shadow-lg shadow-emerald-500/10">
+                <i class="fa-solid fa-list-check"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-header font-bold text-slate-900 dark:text-white">Task Master</h1>
+                <p class="text-slate-500 dark:text-slate-400 font-medium">Capture ideas and organize your day.</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <div
+                class="hidden sm:flex items-center px-4 py-2 bg-slate-100 dark:bg-dark-800 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400">
+                <span class="text-emerald-500 mr-2">{{ tasks.count }}</span> Active Tasks
+            </div>
+            <button onclick="openTaskModal()"
+                class="px-6 py-3 bg-emerald-600 text-white rounded-2xl font-bold hover:bg-emerald-700 shadow-xl shadow-emerald-500/10 transition-all hover:scale-105 active:scale-95">
+                <i class="fa-solid fa-plus mr-2"></i> New Task
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div
+            class="bg-white dark:bg-dark-900 p-6 rounded-3xl border border-slate-100 dark:border-dark-800 flex items-center space-x-4">
+            <div class="w-10 h-10 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center"><i
+                    class="fa-solid fa-fire"></i></div>
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase">Urgent</p>
+                <p class="text-xl font-bold dark:text-white">4</p>
+            </div>
+        </div>
+        <div
+            class="bg-white dark:bg-dark-900 p-6 rounded-3xl border border-slate-100 dark:border-dark-800 flex items-center space-x-4">
+            <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center"><i
+                    class="fa-solid fa-calendar-day"></i></div>
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase">Due Today</p>
+                <p class="text-xl font-bold dark:text-white">2</p>
+            </div>
+        </div>
+        <div
+            class="bg-white dark:bg-dark-900 p-6 rounded-3xl border border-slate-100 dark:border-dark-800 flex items-center space-x-4">
+            <div class="w-10 h-10 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center"><i
+                    class="fa-solid fa-circle-check"></i></div>
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase">Completed</p>
+                <p class="text-xl font-bold dark:text-white">12</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main List & Filters -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+
+        <!-- Sidebar Filters -->
+        <div class="space-y-6">
+            <div class="bg-white dark:bg-dark-900 rounded-3xl p-6 border border-slate-200 dark:border-dark-800">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Views</h3>
+                <nav class="space-y-1">
+                    <a href="#"
+                        class="flex items-center px-4 py-2.5 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 rounded-xl font-bold">
+                        <i class="fa-solid fa-inbox w-6"></i> All Tasks
+                    </a>
+                    <a href="#"
+                        class="flex items-center px-4 py-2.5 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-dark-800 rounded-xl font-medium transition-all group">
+                        <i class="fa-solid fa-calendar-day w-6 text-slate-400 group-hover:text-primary-500"></i> Today
+                    </a>
+                    <a href="#"
+                        class="flex items-center px-4 py-2.5 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-dark-800 rounded-xl font-medium transition-all group">
+                        <i class="fa-solid fa-star w-6 text-slate-400 group-hover:text-amber-500"></i> Important
+                    </a>
+                </nav>
+
+                <div class="mt-10 mb-6 flex items-center justify-between">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Projects</h3>
+                    <button class="text-primary-600 hover:text-primary-700"><i
+                            class="fa-solid fa-plus-circle"></i></button>
+                </div>
+                <div class="space-y-1">
+                    {% for cat in categories %}
+                    <a href="#"
+                        class="flex items-center px-4 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                        <span class="w-1.5 h-1.5 rounded-full mr-4" style="background-color: #7c3aed;"></span> {{
+                        cat.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Task List Area -->
+        <div class="lg:col-span-3 space-y-4">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center bg-slate-100 dark:bg-dark-800 p-1 rounded-xl">
+                    <button
+                        class="px-4 py-1.5 bg-white dark:bg-dark-700 shadow-sm rounded-lg text-xs font-bold text-slate-800 dark:text-white">Active</button>
+                    <button
+                        class="px-4 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">Completed</button>
+                </div>
+                <button class="text-sm font-bold text-slate-400 hover:text-primary-600 transition-colors">
+                    <i class="fa-solid fa-sort-amount-down mr-2"></i> Sort by Priority
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                {% if tasks %}
+                {% for task in tasks %}
+                <div
+                    class="group bg-white dark:bg-dark-900 p-5 rounded-2xl border border-slate-200 dark:border-dark-800 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/5 transition-all flex items-start">
+                    <button
+                        class="mt-1 w-6 h-6 rounded-full border-2 border-slate-200 dark:border-dark-700 hover:border-emerald-500 flex items-center justify-center transition-all">
+                        <i
+                            class="fa-solid fa-check text-[10px] text-white opacity-0 group-hover:opacity-100 bg-emerald-500 w-full h-full rounded-full flex items-center justify-center transition-all"></i>
+                    </button>
+                    <div class="ml-5 flex-1">
+                        <div class="flex items-start justify-between">
+                            <h4
+                                class="font-bold text-slate-800 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                                {{ task.title }}</h4>
+                            <div class="flex items-center space-x-2">
+                                {% if task.priority == 'high' or task.priority == 'urgent' %}
+                                <span
+                                    class="px-2 py-0.5 rounded text-[10px] bg-rose-50 text-rose-500 dark:bg-rose-950/30 font-bold uppercase tracking-wider">High
+                                    Priority</span>
+                                {% endif %}
+                                <button class="text-slate-300 hover:text-slate-500 transition-colors"><i
+                                        class="fa-solid fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 mb-3 line-clamp-1">{{
+                            task.description|default:"No description provided" }}</p>
+                        <div class="flex items-center space-x-6">
+                            <span class="flex items-center text-[11px] font-bold text-slate-400">
+                                <i class="fa-solid fa-calendar-day mr-2 opacity-50"></i> {{ task.due_date|naturaltime }}
+                            </span>
+                            {% if task.category %}
+                            <span class="flex items-center text-[11px] font-bold text-primary-500/70">
+                                <i class="fa-solid fa-tag mr-2 opacity-50"></i> {{ task.category.name }}
+                            </span>
+                            {% endif %}
+                            <div class="flex-1"></div>
+                            <div class="flex -space-x-1.5">
+                                <div
+                                    class="w-6 h-6 rounded-full border-2 border-white dark:border-dark-900 bg-indigo-500 flex items-center justify-center text-[10px] text-white font-bold shadow-sm">
+                                    AI</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div
+                    class="text-center py-20 bg-slate-50 dark:bg-dark-950/30 border-2 border-dashed border-slate-200 dark:border-dark-800 rounded-3xl">
+                    <div
+                        class="w-20 h-20 bg-white dark:bg-dark-900 rounded-full shadow-lg flex items-center justify-center mx-auto mb-6 text-slate-300 dark:text-dark-700">
+                        <i class="fa-solid fa-clipboard-list text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 dark:text-white">Workspace is empty</h3>
+                    <p class="text-slate-500 dark:text-slate-400 mt-2 max-w-xs mx-auto">Build your workflow by adding
+                        your first task or reminder.</p>
+                    <button onclick="openTaskModal()"
+                        class="mt-8 px-8 py-3 bg-emerald-600 text-white rounded-2xl font-bold shadow-lg shadow-emerald-600/20 hover:scale-105 transition-all">Add
+                        First Task</button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Task Modal (Simplified) -->
+<div id="task-modal"
+    class="fixed inset-0 z-50 hidden bg-dark-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div
+        class="bg-white dark:bg-dark-900 w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden border border-slate-100 dark:border-dark-800">
+        <div class="p-8 border-b border-slate-100 dark:border-dark-800 flex items-center justify-between">
+            <h3 class="text-2xl font-header font-bold text-slate-900 dark:text-white">Create Quick Task</h3>
+            <button onclick="closeTaskModal()" class="text-slate-400 hover:text-rose-500"><i
+                    class="fa-solid fa-xmark text-2xl"></i></button>
+        </div>
+        <div class="p-8 space-y-6">
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Title</label>
+                <input type="text" placeholder="e.g., Review Q3 Marketing Plan"
+                    class="w-full bg-slate-50 dark:bg-dark-800 border-none rounded-2xl p-4 text-slate-900 dark:text-white font-bold placeholder:text-slate-300 focus:ring-2 focus:ring-emerald-500 transition-all">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Priority</label>
+                    <select
+                        class="w-full bg-slate-50 dark:bg-dark-800 border-none rounded-2xl p-4 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-emerald-500">
+                        <option>Low</option>
+                        <option>Medium</option>
+                        <option>High</option>
+                        <option>Urgent</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Due Date</label>
+                    <input type="date"
+                        class="w-full bg-slate-50 dark:bg-dark-800 border-none rounded-2xl p-4 text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-emerald-500">
+                </div>
+            </div>
+            <div
+                class="p-4 bg-indigo-50 dark:bg-indigo-950/30 rounded-2xl border border-indigo-100 dark:border-indigo-900/40 flex items-start space-x-4">
+                <i class="fa-solid fa-sparkles text-indigo-500 mt-1"></i>
+                <p class="text-xs text-indigo-700 dark:text-indigo-400 leading-relaxed font-medium">AI Smart Suggestion:
+                    Based on your current calendar, scheduling this for Tuesday afternoon would be optimal.</p>
+            </div>
+        </div>
+        <div class="p-8 bg-slate-50 dark:bg-dark-800/50 flex justify-end">
+            <button
+                class="px-8 py-3 bg-emerald-600 text-white rounded-2xl font-bold shadow-xl shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all">Create
+                Task</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openTaskModal() { document.getElementById('task-modal').classList.remove('hidden'); }
+    function closeTaskModal() { document.getElementById('task-modal').classList.add('hidden'); }
+</script>
+{% endblock %}

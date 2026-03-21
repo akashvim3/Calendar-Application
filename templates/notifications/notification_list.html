@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8 animate-fade-in">
+
+    <!-- Header -->
+    <div
+        class="flex items-center justify-between p-8 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-800 rounded-3xl shadow-sm">
+        <div class="flex items-center space-x-5">
+            <div
+                class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl shadow-lg shadow-amber-500/10">
+                <i class="fa-solid fa-bell"></i></div>
+            <div>
+                <h1 class="text-3xl font-header font-bold text-slate-900 dark:text-white">Alert Center</h1>
+                <p class="text-slate-500 dark:text-slate-400 font-medium italic">Never miss an important update.</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-3">
+            <button
+                class="px-6 py-3 bg-slate-100 dark:bg-dark-800 text-slate-700 dark:text-slate-300 rounded-2xl font-bold hover:bg-slate-200 dark:hover:bg-dark-700 transition-all text-sm">Mark
+                All as Read</button>
+            <button class="p-3 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/10 rounded-2xl transition-all"><i
+                    class="fa-solid fa-trash-can"></i></button>
+        </div>
+    </div>
+
+    <!-- Notifications List -->
+    <div
+        class="bg-white dark:bg-dark-900 rounded-3xl border border-slate-200 dark:border-dark-800 overflow-hidden shadow-sm transition-all">
+        {% if notifications %}
+        <div class="divide-y divide-slate-100 dark:divide-dark-800">
+            {% for notification in notifications %}
+            <div
+                class="group p-8 flex items-start hover:bg-slate-50 dark:hover:bg-dark-800/50 transition-all border-l-4 {% if not notification.is_read %}border-primary-600 bg-primary-50/10 dark:bg-primary-900/5{% else %}border-transparent{% endif %}">
+                <div
+                    class="w-12 h-12 rounded-2xl shrink-0 flex items-center justify-center text-xl mr-6 {% if notification.level == 'error' %}bg-rose-100 text-rose-500{% elif notification.level == 'warning' %}bg-amber-100 text-amber-500{% elif notification.level == 'success' %}bg-emerald-100 text-emerald-500{% else %}bg-primary-100 text-primary-500{% endif %}">
+                    {% if notification.level == 'error' %}<i class="fa-solid fa-circle-exclamation"></i>
+                    {% elif notification.level == 'warning' %}<i class="fa-solid fa-triangle-exclamation"></i>
+                    {% elif notification.level == 'success' %}<i class="fa-solid fa-check-circle"></i>
+                    {% else %}<i class="fa-solid fa-info-circle"></i>{% endif %}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4
+                            class="text-lg font-bold text-slate-800 dark:text-white group-hover:text-primary-600 transition-colors">
+                            {{ notification.title }}</h4>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{
+                            notification.created_at|naturaltime }}</span>
+                    </div>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{{ notification.message }}</p>
+                    {% if notification.action_url %}
+                    <div class="mt-4 flex items-center space-x-6">
+                        <a href="{{ notification.action_url }}"
+                            class="text-xs font-bold text-primary-600 hover:text-primary-700 underline underline-offset-4 decoration-primary-200 hover:decoration-primary-600 transition-all">View
+                            Action</a>
+                        <button class="text-xs font-bold text-slate-400 hover:text-slate-600">Dismiss</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="flex flex-col items-center justify-center py-32 text-center p-12 animate-fade-in">
+            <div
+                class="w-24 h-24 bg-slate-50 dark:bg-dark-950 rounded-3xl flex items-center justify-center mb-8 text-slate-200 dark:text-dark-800">
+                <i class="fa-solid fa-bell-slash text-5xl"></i>
+            </div>
+            <h3 class="text-2xl font-header font-bold text-slate-800 dark:text-white mb-2">Workspace is Quiet</h3>
+            <p class="text-slate-500 dark:text-slate-400 max-w-sm mb-8 font-medium">You don't have any notifications at
+                the moment. We'll alert you when something important happens.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

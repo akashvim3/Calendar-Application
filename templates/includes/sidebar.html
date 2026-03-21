@@ -1,0 +1,73 @@
+<!-- Sidebar -->
+<aside class="hidden lg:flex lg:flex-shrink-0">
+    <div
+        class="flex flex-col w-64 bg-white dark:bg-dark-900 border-r border-slate-200 dark:border-dark-800 transition-colors duration-300">
+        <!-- Logo -->
+        <div class="flex items-center h-16 px-6 border-b border-slate-200 dark:border-dark-800">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center text-white">
+                    <i class="fa-solid fa-bolt-lightning"></i>
+                </div>
+                <span class="text-xl font-header font-bold tracking-tight text-slate-800 dark:text-white uppercase">
+                    AI Assistant</span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+            <div class="pb-4 mb-4 border-b border-slate-100 dark:border-dark-800">
+                <p class="px-2 mb-2 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                    Main</p>
+                <a href="{% url 'dashboard:home' %}"
+                    class="flex items-center px-4 py-3 text-slate-600 dark:text-slate-400 rounded-xl hover:bg-primary-50 hover:text-primary-600 dark:hover:bg-primary-900/20 dark:hover:text-primary-400 transition-all group {% if 'dashboard' in request.path %}nav-item-active{% endif %}">
+                    <i class="fa-solid fa-house-chimney w-6 text-lg"></i>
+                    <span class="ml-3 font-medium">Dashboard</span>
+                </a>
+            </div>
+
+            <div class="pb-4 mb-4 border-b border-slate-100 dark:border-dark-800">
+                <p class="px-2 mb-2 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                    Productivity</p>
+                <a href="{% url 'calendar_app:calendar' %}"
+                    class="flex items-center px-4 py-3 text-slate-600 dark:text-slate-400 rounded-xl hover:bg-primary-50 hover:text-primary-600 dark:hover:bg-primary-900/20 dark:hover:text-primary-400 transition-all group {% if 'calendar' in request.path %}nav-item-active{% endif %}">
+                    <i class="fa-solid fa-calendar-alt w-6 text-lg"></i>
+                    <span class="ml-3 font-medium">Calendar</span>
+                </a>
+                <a href="{% url 'tasks_app:task-list' %}"
+                    class="flex items-center px-4 py-3 text-slate-600 dark:text-slate-400 rounded-xl hover:bg-primary-50 hover:text-primary-600 dark:hover:bg-primary-900/20 dark:hover:text-primary-400 transition-all group {% if 'tasks' in request.path %}nav-item-active{% endif %}">
+                    <i class="fa-solid fa-list-check w-6 text-lg"></i>
+                    <span class="ml-3 font-medium">Tasks</span>
+                </a>
+                <a href="{% url 'email_app:email-list' %}"
+                    class="flex items-center px-4 py-3 text-slate-600 dark:text-slate-400 rounded-xl hover:bg-primary-50 hover:text-primary-600 dark:hover:bg-primary-900/20 dark:hover:text-primary-400 transition-all group {% if 'email' in request.path %}nav-item-active{% endif %}">
+                    <i class="fa-solid fa-envelope w-6 text-lg"></i>
+                    <span class="ml-3 font-medium">Email</span>
+                </a>
+            </div>
+
+            <div class="pb-4 mb-4 border-b border-slate-100 dark:border-dark-800">
+                <p class="px-2 mb-2 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                    AI Assistant</p>
+                <a href="{% url 'chat_app:chat' %}"
+                    class="flex items-center px-4 py-3 text-slate-600 dark:text-slate-400 rounded-xl hover:bg-primary-50 hover:text-primary-600 dark:hover:bg-primary-900/20 dark:hover:text-primary-400 transition-all group {% if 'chat' in request.path %}nav-item-active{% endif %}">
+                    <i class="fa-solid fa-comment-dots w-6 text-lg"></i>
+                    <span class="ml-3 font-medium">AI Chat</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- User Actions (Bottom) -->
+        <div class="p-4 border-t border-slate-200 dark:border-dark-800">
+            <a href="{% url 'accounts:settings' %}"
+                class="flex items-center px-4 py-3 text-slate-600 dark:text-slate-400 rounded-xl hover:bg-slate-100 dark:hover:bg-dark-800 transition-all">
+                <i class="fa-solid fa-gear w-6 text-lg"></i>
+                <span class="ml-3 font-medium">Settings</span>
+            </a>
+            <a href="{% url 'accounts:logout' %}"
+                class="flex items-center px-4 py-3 text-rose-600 dark:text-rose-400 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-900/10 transition-all">
+                <i class="fa-solid fa-right-from-bracket w-6 text-lg"></i>
+                <span class="ml-3 font-medium">Logout</span>
+            </a>
+        </div>
+    </div>
+</aside>
