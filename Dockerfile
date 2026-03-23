@@ -33,4 +33,4 @@ RUN python manage.py collectstatic --noinput --settings=ai_assistant.settings
 EXPOSE 8000
 
 # Run the application with gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "4", "--worker-class", "daphne.asgi:ASGI", "--worker-tmp-dir", "/dev/shm", "ai_assistant.asgi:application"]
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "ai_assistant.asgi:application"]
