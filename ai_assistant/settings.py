@@ -17,12 +17,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Security
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dev-key-change-in-production')
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
-import os
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
-ALLOWED_HOSTS = os.environ.get(
-    "ALLOWED_HOSTS",
-    "localhost,127.0.0.1,calendar-application-iiz6.onrender.com"
-).split(",")
+CSRF_TRUSTED_ORIGINS = [
+    "https://calendar-application-iiz6.onrender.com"
+]
 
 # Application definition
 INSTALLED_APPS = [
